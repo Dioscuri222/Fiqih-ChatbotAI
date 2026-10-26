@@ -1,27 +1,47 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= judul %></title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            kabut: '#E9EEF0',
-            tinta: '#10242B',
-            madu: '#E0A100'
+            scholar: {
+              50: '#f0f5fa',
+              100: '#e1ecf5',
+              700: '#1b3d6b',
+              800: '#132e52',
+              900: '#0b1d36',
+              950: '#071223'
+            },
+            tarjih: {
+              500: '#d97706',
+              600: '#b45309'
+            },
+            emeraldFiqih: {
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46'
+            }
           },
           fontFamily: {
-            sans: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif']
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
           }
         }
       }
     }
   </script>
 </head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">

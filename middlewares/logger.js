@@ -1,35 +1,43 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('../config');
+const utils = require('../utils');
 
 const logPath = path.join(config.logDir, config.logFile);
 
-// Siapkan folder dan header tabel Markdown sekali saja saat server menyala
+// Siapkan folder logs dan header tabel Markdown jika belum tersedia
 fs.mkdirSync(config.logDir, { recursive: true });
 if (!fs.existsSync(logPath)) {
   fs.writeFileSync(
     logPath,
-    '# Log Request\n\n' +
-      '| Waktu | Method | URL | Status | Durasi | IP |\n' +
+    '# Log Request — FiqihAI\n\n' +
+      '| Timestamp (ISO) | Method | Endpoint / URL | HTTP Status | Durasi | IP Client |\n' +
       '|---|---|---|---|---|---|\n'
   );
 }
 
-// Karakter "|" harus di-escape agar tabel Markdown tidak rusak
-const aman = (teks) => String(teks).replace(/\|/g, '%7C');
+// Escape karakter "|" agar format tabel Markdown tidak rusak
+const escapeMarkdown = (text) => String(text).replace(/\|/g, '%7C');
 
 module.exports = (req, res, next) => {
-  const mulai = process.hrtime.bigint();
+  const waktuMulai = process.hrtime.bigint();
 
-  // Catat setelah respons selesai supaya status code dan durasi sudah diketahui
+  // Catat saat response selesai dikirimkan
   res.on('finish', () => {
-    const durasiMs = Number(process.hrtime.bigint() - mulai) / 1e6;
-    const baris =
-      `| ${new Date().toISOString()} | ${req.method} | ${aman(req.originalUrl)} ` +
-      `| ${res.statusCode} | ${durasiMs.toFixed(1)} ms | ${aman(req.ip)} |\n`;
+    const durasiMs = Number(process.hrtime.bigint() - waktuMulai) / 1e6;
+    const timestampISO = new Date().toISOString();
 
-    fs.appendFile(logPath, baris, (err) => {
-      if (err) console.error('Gagal menulis log:', err.message);
+    // 1. Tampilkan log di terminal / console backend (Wajib PPAW Week 7)
+    const logConsole = utils.formatLogTerminal(req.method, req.originalUrl, res.statusCode, durasiMs);
+    console.log(logConsole);
+
+    // 2. Simpan rekaman log ke berkas logs/logger.md
+    const logBaris =
+      `| ${timestampISO} | ${req.method} | ${escapeMarkdown(req.originalUrl)} ` +
+      `| ${res.statusCode} | ${durasiMs.toFixed(1)} ms | ${escapeMarkdown(req.ip)} |\n`;
+
+    fs.appendFile(logPath, logBaris, (err) => {
+      if (err) console.error('Gagal menulis log ke file:', err.message);
     });
   });
 
